@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain {
@@ -22,21 +22,22 @@ public class Drivetrain {
   private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
   // Module A
-  private final SwerveModule m_frontLeft = new SwerveModule(10, 11);
+  private final SwerveModule m_frontLeft = new SwerveModule("A",10, 11);
   // Module B
-  private final SwerveModule m_frontRight = new SwerveModule(12, 13);
+  private final SwerveModule m_frontRight = new SwerveModule("B", 12, 13);
   // Module C
-  private final SwerveModule m_backLeft = new SwerveModule(14, 15);
+  private final SwerveModule m_backLeft = new SwerveModule("C", 14, 15);
   // Module D
-  private final SwerveModule m_backRight = new SwerveModule(16, 17);
+  private final SwerveModule m_backRight = new SwerveModule("D", 16, 17);
 
-  private final AnalogGyro m_gyro = new AnalogGyro(0);
+  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
       m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
   private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       m_kinematics,
+      //m_gyro.getRotation2d(),
       m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
@@ -68,6 +69,7 @@ public class Drivetrain {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_backLeft.setDesiredState(swerveModuleStates[2]);
     m_backRight.setDesiredState(swerveModuleStates[3]);
+    
   }
 
   /** Updates the field relative position of the robot. */
