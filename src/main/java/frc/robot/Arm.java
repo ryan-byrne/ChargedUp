@@ -18,8 +18,8 @@ public class Arm {
 	private final DigitalInput lowerLiftLimit;
 	private final DigitalInput minExtensionLimit;
 	private final DigitalInput maxExtensionLimit;
-	//private final AddressableLED ledStrip;
-	//private final AddressableLEDBuffer ledBuffer;
+	private final AddressableLED ledStrip;
+	private final AddressableLEDBuffer ledBuffer;
 
 	public Arm(int liftCanId, int extendCanId, int intakeCanId, int ledPWM) {
 		// CAN IDs
@@ -30,9 +30,9 @@ public class Arm {
 		lowerLiftLimit = new DigitalInput(1);
 		maxExtensionLimit = new DigitalInput(2); // limit switch
 		minExtensionLimit = new DigitalInput(3); // limit switch
-		//ledStrip = new AddressableLED(ledPWM);   //LEDs
-		//ledStrip.setLength(1);    //Replace 1 with number of LEDs
-		//ledBuffer = new AddressableLEDBuffer(ledPWM);
+		ledStrip = new AddressableLED(ledPWM);   //LEDs
+		ledStrip.setLength(1);    //Replace 1 with number of LEDs
+		ledBuffer = new AddressableLEDBuffer(ledPWM);
 
 	}
 
@@ -63,7 +63,7 @@ public class Arm {
 		} else {
 			intakeMotor.set(0);
 		}
-		/*
+		
 		if(controller.getXButton()){
 			// purple
 			for (int i = 0; i < ledBuffer.getLength(); i++){
@@ -86,7 +86,7 @@ public class Arm {
 			}
 			ledStrip.stop();
 		}
-		*/
+		
 	}
 
 
