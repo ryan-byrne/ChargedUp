@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,7 +13,6 @@ public class Drivetrain {
 	public static final double kMaxSpeed = 3.0; 
 	public static final double kMaxAngularSpeed = Math.PI; 
 
-//What is this for?
 	private final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
 	private final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
 	private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
@@ -75,7 +70,6 @@ public class Drivetrain {
 		m_backRight.setDesiredState(swerveModuleStates[3]);
 		
 	}
-
 	/** Updates the field relative position of the robot. */
 	public void updateOdometry() {
 		m_odometry.update(
