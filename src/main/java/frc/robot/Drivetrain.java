@@ -6,6 +6,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 // DriveTrain handles control and movement of swerveDrive
 public class Drivetrain {
@@ -18,15 +20,18 @@ public class Drivetrain {
 	private final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
 	private final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
+	private final ShuffleboardTab m_driveTab;
+	
 	//Four swerveModule objects, one for each wheel of the robot
 	// Module A
-	private final SwerveModule m_frontLeft = new SwerveModule("A", 10, 11);
+	private final SwerveModule m_frontLeft = new SwerveModule(10, 11);
+	//private final TestSwerveModule m_frontLeft = new TestSwerveModule(10, 11, 0, 1);
 	// Module B
-	private final SwerveModule m_frontRight = new SwerveModule("B", 12, 13);
+	private final SwerveModule m_frontRight = new SwerveModule(12, 13);
 	// Module C
-	private final SwerveModule m_backLeft = new SwerveModule("C", 14, 15);
+	private final SwerveModule m_backLeft = new SwerveModule(14, 15);
 	// Module D
-	private final SwerveModule m_backRight = new SwerveModule("D", 16, 17);
+	private final SwerveModule m_backRight = new SwerveModule(16, 17);
 	// Robot's orientation in space
 	private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
@@ -47,6 +52,13 @@ public class Drivetrain {
 		//constructor 
 	public Drivetrain() {
 		m_gyro.reset();
+		m_driveTab = Shuffleboard.getTab("Drivetrain");
+		m_driveTab.add("Gyro", m_gyro);
+		m_driveTab.add("Front Left", m_frontLeft);
+		m_driveTab.add("Front Right", m_frontRight);
+		m_driveTab.add("Back Left", m_backLeft);
+		m_driveTab.add("Back Right", m_backRight);
+
 	}
 
 	/**
@@ -68,7 +80,8 @@ public class Drivetrain {
 		m_frontRight.setDesiredState(swerveModuleStates[1]);
 		m_backLeft.setDesiredState(swerveModuleStates[2]);
 		m_backRight.setDesiredState(swerveModuleStates[3]);
-		
+
+
 	}
 
 	/** Updates the field relative position of the robot. */

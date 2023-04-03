@@ -3,16 +3,26 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
-public class Arm {
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+public class Arm implements Sendable {
 	// Initializing Variables
 	private final CANSparkMax liftMotor;
 	private final CANSparkMax extendMotor;
 	//private final WPI_VictorSPX clawMotor;
 
+	ShuffleboardTab m_armTab;
+
 	public Arm(int liftCanId, int extendCanId, int intakeCanId, int maxLiftId, int minLiftId, int maxExtendId, int minExtendId) {
 		liftMotor = new CANSparkMax(liftCanId, CANSparkMaxLowLevel.MotorType.kBrushless); // controlled by CAN SparkMax
 		extendMotor = new CANSparkMax(extendCanId,CANSparkMaxLowLevel.MotorType.kBrushless);// controlled by CAN SparkMax
 		//clawMotor = new WPI_VictorSPX(intakeCanId); // controlled by TalonSRX (for claw)
+		m_armTab = Shuffleboard.getTab("Arm");
+		m_armTab.add("Telemetry", this);
+
 	}
 
 	public double getExtensionSpeed(){
@@ -32,19 +42,15 @@ public class Arm {
 	}
 
 	public void setExtensionSpeed(double speed){
-		//double length = getExtensionLength();
-		//SmartDashboard.putNumber("Extension", length);
 		extendMotor.set(speed);
 	}
 
 	public void setLiftSpeed(double speed){
-		//double angle = getLiftAngle();
-		//SmartDashboard.putNumber("Lift Angle", angle);
 		liftMotor.set(speed);
 	}
 
-	// public void setPosition(){
-	// 	liftMotor.getEncoder().setPosition(100);
-	// }
-
+	public void initSendable(SendableBuilder builder) {
+		builder.setSmartDashboardType("Swerve");
+		builder.addDoubleProperty("lift-angle", this::getLiftAngle, null);
+	}
 }
