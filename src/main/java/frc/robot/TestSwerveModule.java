@@ -19,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 
 public class TestSwerveModule implements Sendable {
@@ -29,20 +31,20 @@ public class TestSwerveModule implements Sendable {
 	private static final double kModuleMaxAngularAcceleration = 2 * Math.PI; // radians per second squared
 
 	private final CANSparkMax m_driveMotor;
-	private final WPI_VictorSPX m_turningMotor;
+	private final WPI_TalonSRX m_turningMotor;
 
 	private final RelativeEncoder m_driveEncoder;
-	private final Encoder m_turningEncoder;
+	private final DutyCycleEncoder m_turningEncoder;
 
 	private SwerveModuleState m_swerveState = new SwerveModuleState();
 
 	// Gains are for example purposes only - must be determined for your own robot!
-	private final PIDController m_drivePIDController = new PIDController(0.2, 0, 0);
+	private final PIDController m_drivePIDController = new PIDController(0.1, 0, 0);
 
 	// Gains are for example purposes only - must be determined for your own robot!
 	private final ProfiledPIDController m_turningPIDController = new ProfiledPIDController(
-			0.2,
-			0,
+			2,
+			1,
 			0,
 			new TrapezoidProfile.Constraints(
 					kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
@@ -65,15 +67,14 @@ public class TestSwerveModule implements Sendable {
 	public TestSwerveModule(
 			int driveMotorCanID,
 			int turnMotorCanID,
-			int turningEncoderChannelA,
-			int turningEncoderChannelB) {
+			int turningEncoderChannel) {
 
 		m_driveMotor = new CANSparkMax(driveMotorCanID, CANSparkMaxLowLevel.MotorType.kBrushless);
 		m_driveEncoder = m_driveMotor.getEncoder();
 
-		m_turningMotor = new WPI_VictorSPX(turnMotorCanID);
-		m_turningEncoder = new Encoder(turningEncoderChannelB, turningEncoderChannelA);
-		m_turningEncoder.setDistancePerPulse(2 * Math.PI / 420);
+		m_turningMotor = new WPI_TalonSRX(turnMotorCanID);
+		m_turningEncoder = new DutyCycleEncoder(turningEncoderChannel);
+		m_turningEncoder.setDistancePerRotation(2 * Math.PI);
 		// Limit the PID Controller's input range between -pi and pi and set the input
 		// to be continuous.
 		m_turningPIDController.enableContinuousInput(-Math.PI, Math.PI);
@@ -133,10 +134,6 @@ public class TestSwerveModule implements Sendable {
 		return m_turningMotor.getMotorOutputVoltage();
 	}
 
-	public double getTurnVelocity() {
-		return m_turningEncoder.getRate();
-	}
-
 	public double getDesiredTurnPosition(){
 		return m_swerveState.angle.getRadians();
 	}
@@ -160,7 +157,6 @@ public class TestSwerveModule implements Sendable {
 	public void initSendable(SendableBuilder builder) {
 		builder.setSmartDashboardType("Test Swerve");
 		builder.addDoubleProperty("turn-position", this::getTurnPosition, null);
-		builder.addDoubleProperty("turn-velocity", this::getTurnVelocity, null);
 		builder.addDoubleProperty("turn-voltage", this::getTurnVoltage, null);
 		builder.addDoubleProperty("turn-desired", this::getDesiredTurnPosition, null);
 		builder.addDoubleProperty("drive-velocity", this::getDriveVelocity, null);

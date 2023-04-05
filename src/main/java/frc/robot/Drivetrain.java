@@ -25,7 +25,6 @@ public class Drivetrain {
 	//Four swerveModule objects, one for each wheel of the robot
 	// Module A
 	private final SwerveModule m_frontLeft = new SwerveModule(10, 11);
-	//private final TestSwerveModule m_frontLeft = new TestSwerveModule(10, 11, 0, 1);
 	// Module B
 	private final SwerveModule m_frontRight = new SwerveModule(12, 13);
 	// Module C

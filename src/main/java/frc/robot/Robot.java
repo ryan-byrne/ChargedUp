@@ -10,13 +10,19 @@ public class Robot extends TimedRobot {
 	private final XboxController driverController = new XboxController(0);
 	private final XboxController operatorController = new XboxController(1);
 	private final Drivetrain m_swerve = new Drivetrain();
-	private final Arm m_arm = new Arm(18, 19, 20, 0, 1, 2, 3);// CANId for Arm motors
+	private final Arm m_arm = new Arm(18, 19, 21, 20);// CANId for Arm motors
 	// private final LEDs m_leds = new LEDs();
 	// Imposes a rate limit on how quickly the robot can change speed or direction,
 	// to make joystick input more smooth
 	private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
 	private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
 	private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+	public double slowRate = 1;
+
+	@Override
+	public void robotInit() {
+		
+	}
 
 	@Override
 	public void autonomousInit() {
@@ -33,34 +39,45 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		updateArm();
-		//updateDrive(true);
+		updateDrive(false);
+	}
+
+	@Override
+	public void teleopInit() {
+		
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		updateDrive(false);
+		//updateDrive(false);
 		//updateArm();
 		//updateLeds();
 	}
 
 	private void updateDrive(boolean fieldRelative) {
 
+		if (driverController.getRightBumper()){
+			slowRate = .2;
+		}
+		else {
+			slowRate = 1;
+		}
 		// Get the x speed. We are inverting this because Xbox controllers return
 		// negative values when we push forward.
-		final var xSpeed = -m_xspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftY(), 0.02))
+		final var xSpeed = -m_xspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftY()*slowRate, 0.05))
 				* Drivetrain.kMaxSpeed;
 
 		// Get the y speed or sideways/strafe speed. We are inverting this because
 		// we want a positive value when we pull to the left. Xbox controllers
 		// return positive values when you pull to the right by default.
-		final var ySpeed = -m_yspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftX(), 0.02))
+		final var ySpeed = -m_yspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftX()*slowRate, 0.05))
 				* Drivetrain.kMaxSpeed;
 
 		// Get the rate of angular rotation. We are inverting this because we want a
 		// positive value when we pull to the left (remember, CCW is positive in
 		// mathematics). Xbox controllers return positive values when you pull to
 		// the right by default.
-		final var rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(driverController.getRightX(), 0.02))
+		final var rot = -m_rotLimiter.calculate(MathUtil.applyDeadband(driverController.getRightX()*slowRate, 0.05))
 				* Drivetrain.kMaxAngularSpeed;
 
 		m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
@@ -69,11 +86,20 @@ public class Robot extends TimedRobot {
 
 	private void updateArm() {
 
-		// Button ontrol
+		// Button Control
+
 
 		// Manual Control
 		m_arm.setExtensionSpeed(operatorController.getLeftY());
 		m_arm.setLiftSpeed(-operatorController.getRightY());
+
+		if ( operatorController.getRightBumper() ) {
+			m_arm.setIntake(-1);
+		} else if ( operatorController.getLeftBumper() ){
+			m_arm.setIntake(0.5);
+		} else {
+			m_arm.setIntake(0);
+		}
 
 	}
 

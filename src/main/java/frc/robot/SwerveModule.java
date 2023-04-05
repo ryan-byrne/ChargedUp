@@ -35,19 +35,15 @@ public class SwerveModule implements Sendable {
 
 	private SwerveModuleState m_swerveState = new SwerveModuleState();
 
+	private final PIDController m_drivePIDController = new PIDController(.75, 0, 0);
 
-	// Gains are for example purposes only - must be determined for your own robot!
-	private final PIDController m_drivePIDController = new PIDController(1, 0, 0);
-
-	// Gains are for example purposes only - must be determined for your own robot!
 	private final ProfiledPIDController m_turningPIDController = new ProfiledPIDController(
+			5,
 			1,
-			0,
-			0,
+			0.2,
 			new TrapezoidProfile.Constraints(
 					kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
-	// Gains are for example purposes only - must be determined for your own robot!
 	private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 3);
 	private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
 
@@ -140,12 +136,9 @@ public class SwerveModule implements Sendable {
 	}
 
 	public void initSendable(SendableBuilder builder) {
-		builder.setSmartDashboardType("Swerve");
+		builder.setSmartDashboardType("Swerve Module");
 		builder.addDoubleProperty("turn-position", this::getTurnPosition, null);
-		builder.addDoubleProperty("turn-voltage", this::getTurnVoltage, null);
-		builder.addDoubleProperty("turn-desired", this::getDesiredTurnPosition, null);
 		builder.addDoubleProperty("drive-velocity", this::getDriveVelocity, null);
-		builder.addDoubleProperty("drive-desired", this::getDesiredDriveVelocity, null);
-		builder.addDoubleProperty("drive-voltage", this::getDriveVoltage, null);
+		
 	}
 }

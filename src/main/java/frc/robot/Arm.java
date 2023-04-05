@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
@@ -12,14 +13,21 @@ public class Arm implements Sendable {
 	// Initializing Variables
 	private final CANSparkMax liftMotor;
 	private final CANSparkMax extendMotor;
-	//private final WPI_VictorSPX clawMotor;
+	private final WPI_VictorSPX leftClaw;
+	private final WPI_VictorSPX rightClaw;
 
 	ShuffleboardTab m_armTab;
 
-	public Arm(int liftCanId, int extendCanId, int intakeCanId, int maxLiftId, int minLiftId, int maxExtendId, int minExtendId) {
+	public Arm(
+		int liftCanId, 
+		int extendCanId, 
+		int leftClawCanId,
+		int rightClawCanId
+	) {
 		liftMotor = new CANSparkMax(liftCanId, CANSparkMaxLowLevel.MotorType.kBrushless); // controlled by CAN SparkMax
 		extendMotor = new CANSparkMax(extendCanId,CANSparkMaxLowLevel.MotorType.kBrushless);// controlled by CAN SparkMax
-		//clawMotor = new WPI_VictorSPX(intakeCanId); // controlled by TalonSRX (for claw)
+		leftClaw = new WPI_VictorSPX(leftClawCanId);
+		rightClaw = new WPI_VictorSPX(rightClawCanId);
 		m_armTab = Shuffleboard.getTab("Arm");
 		m_armTab.add("Telemetry", this);
 
@@ -42,15 +50,42 @@ public class Arm implements Sendable {
 	}
 
 	public void setExtensionSpeed(double speed){
-		extendMotor.set(speed);
+		if ( this.getExtendDisabled() ){
+			extendMotor.set(0);
+		} else {
+			extendMotor.set(speed);
+		}
+	}
+
+	public void setExtension(double extension){
+		// Set the Extension
+	}
+
+	public void setLiftAngle(double angle){
+		// Set Lift Angle
 	}
 
 	public void setLiftSpeed(double speed){
 		liftMotor.set(speed);
 	}
 
+	public void setIntake(double speed){
+		leftClaw.set(speed);
+		rightClaw.set(-speed);
+	}
+
+	public boolean getExtendDisabled(){
+		return (this.getLiftAngle() > 50) || (this.getLiftAngle() < 10);
+	}
+
+	public boolean getLiftDisabled(){
+		return false;
+	}
+
 	public void initSendable(SendableBuilder builder) {
-		builder.setSmartDashboardType("Swerve");
+		builder.setSmartDashboardType("Arm");
+		builder.addBooleanProperty("extend-disabled", this::getExtendDisabled, null);
 		builder.addDoubleProperty("lift-angle", this::getLiftAngle, null);
+		builder.addDoubleProperty("extension", this::getExtensionLength, null);
 	}
 }
