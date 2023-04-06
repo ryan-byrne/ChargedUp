@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -58,11 +59,48 @@ public class Arm implements Sendable {
 	}
 
 	public void setExtension(double extension){
-		// Set the Extension
+		if (extension > this.getExtensionLength()){
+			while (this.getExtensionLength()<extension){
+				this.setExtensionSpeed(100);
+			}
+		}
+		else {
+			while (this.getExtensionLength()>extension){
+				this.setExtensionSpeed(-100);
+			}
+		}
+		
+	}
+
+	public void setTarget(String type, int level){
+		if (type == "cone" && level == 2){
+			this.setLiftAngle(44);
+			this.setExtension(-31);
+		}
+		else if (type == "cone" && level == 1){
+			this.setLiftAngle(41);
+			this.setExtension(-15);
+		}
+		else if (type == "cube" && level == 2){
+			this.setLiftAngle(39);
+			this.setExtension(-19);
+		}
+		else if (type == "cube" && level == 1){
+			this.setLiftAngle(36);
+		}
 	}
 
 	public void setLiftAngle(double angle){
-		// Set Lift Angle
+		if (angle > this.getLiftAngle()){
+			while (this.getLiftAngle()<angle){
+				this.setLiftSpeed(100);
+			}
+		}
+		else {
+			while (this.getLiftAngle()>angle){
+				this.setLiftSpeed(100);
+			}
+		}
 	}
 
 	public void setLiftSpeed(double speed){
@@ -75,7 +113,7 @@ public class Arm implements Sendable {
 	}
 
 	public boolean getExtendDisabled(){
-		return (this.getLiftAngle() > 50) || (this.getLiftAngle() < 10);
+		return (this.getLiftAngle() > 50) || (this.getLiftAngle() < 20);
 	}
 
 	public boolean getLiftDisabled(){

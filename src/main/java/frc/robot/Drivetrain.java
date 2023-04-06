@@ -6,6 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -54,6 +55,8 @@ public class Drivetrain {
 		m_driveTab = Shuffleboard.getTab("Drivetrain");
 		m_driveTab.add("Gyro", m_gyro);
 		m_driveTab.add("Front Left", m_frontLeft);
+		//.withWidget(BuiltInWidgets.kDial)
+		//.withProperties(Map.of(0, 2*))
 		m_driveTab.add("Front Right", m_frontRight);
 		m_driveTab.add("Back Left", m_backLeft);
 		m_driveTab.add("Back Right", m_backRight);
@@ -80,6 +83,14 @@ public class Drivetrain {
 		m_backLeft.setDesiredState(swerveModuleStates[2]);
 		m_backRight.setDesiredState(swerveModuleStates[3]);
 
+
+	}
+
+	public void resetGyro(){
+		m_gyro.reset();
+	}
+
+	public void setPosition(int xPosition, int yPosition) {
 
 	}
 

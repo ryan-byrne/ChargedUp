@@ -35,17 +35,17 @@ public class SwerveModule implements Sendable {
 
 	private SwerveModuleState m_swerveState = new SwerveModuleState();
 
-	private final PIDController m_drivePIDController = new PIDController(.75, 0, 0);
+	private final PIDController m_drivePIDController = new PIDController(2, 0, 0);
 
 	private final ProfiledPIDController m_turningPIDController = new ProfiledPIDController(
 			5,
-			1,
-			0.2,
+			5,
+			0.1,
 			new TrapezoidProfile.Constraints(
 					kModuleMaxAngularVelocity, kModuleMaxAngularAcceleration));
 
-	private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 3);
-	private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(1, 0.5);
+	private final SimpleMotorFeedforward m_driveFeedforward = new SimpleMotorFeedforward(1, 1);
+	private final SimpleMotorFeedforward m_turnFeedforward = new SimpleMotorFeedforward(1, 1);
 
 	/**
 	 * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
@@ -139,6 +139,6 @@ public class SwerveModule implements Sendable {
 		builder.setSmartDashboardType("Swerve Module");
 		builder.addDoubleProperty("turn-position", this::getTurnPosition, null);
 		builder.addDoubleProperty("drive-velocity", this::getDriveVelocity, null);
-		
+		//builder.addDoubleProperty("wheel-angle",thi, null);
 	}
 }
