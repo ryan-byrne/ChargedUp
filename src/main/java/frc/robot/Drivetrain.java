@@ -51,7 +51,9 @@ public class Drivetrain {
 			});
 		//constructor 
 	public Drivetrain() {
-		m_gyro.reset();
+
+		m_gyro.calibrate();
+
 		m_driveTab = Shuffleboard.getTab("Drivetrain");
 		m_driveTab.add("Gyro", m_gyro);
 		m_driveTab.add("Front Left", m_frontLeft);
