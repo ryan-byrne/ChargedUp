@@ -3,14 +3,16 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Arm implements Sendable {
+public class Arm extends SubsystemBase implements Sendable {
 	// Initializing Variables
 	private final CANSparkMax liftMotor;
 	private final CANSparkMax extendMotor;
@@ -58,48 +60,39 @@ public class Arm implements Sendable {
 		}
 	}
 
-	public void setExtension(double extension){
-		if (extension > this.getExtensionLength()){
-			while (this.getExtensionLength()<extension){
-				this.setExtensionSpeed(100);
-			}
-		}
-		else {
-			while (this.getExtensionLength()>extension){
-				this.setExtensionSpeed(-100);
-			}
+	public boolean setExtension(double extension){
+		double BUFFER = 0.5;
+		if ( extension > this.getExtensionLength() + BUFFER ) {
+			this.setExtensionSpeed(0.5);
+			return false;
+		} else if ( extension < this.getExtensionLength() - BUFFER ) {
+			this.setExtensionSpeed(-0.5);
+			return false;
+		} else {
+			this.setExtensionSpeed(0);
+			return true;
 		}
 		
 	}
 
-	public void setTarget(String type, int level){
-		if (type == "cone" && level == 2){
-			this.setLiftAngle(44);
-			this.setExtension(-31);
-		}
-		else if (type == "cone" && level == 1){
-			this.setLiftAngle(41);
-			this.setExtension(-15);
-		}
-		else if (type == "cube" && level == 2){
-			this.setLiftAngle(39);
-			this.setExtension(-19);
-		}
-		else if (type == "cube" && level == 1){
-			this.setLiftAngle(36);
-		}
+	public void setCoast(boolean coast){
+		liftMotor.setIdleMode(coast ? IdleMode.kCoast : IdleMode.kBrake);
+		extendMotor.setIdleMode(coast ? IdleMode.kCoast : IdleMode.kBrake);
 	}
 
-	public void setLiftAngle(double angle){
-		if (angle > this.getLiftAngle()){
-			while (this.getLiftAngle()<angle){
-				this.setLiftSpeed(100);
-			}
-		}
-		else {
-			while (this.getLiftAngle()>angle){
-				this.setLiftSpeed(100);
-			}
+	public boolean setLiftAngle(double angle){
+		
+		final double BUFFER = 0.5;
+
+		if ( angle > this.getLiftAngle() + BUFFER ) {
+			this.setLiftSpeed(1);
+			return false;
+		} else if ( angle < this.getLiftAngle() - BUFFER ) {
+			this.setLiftSpeed(-1);
+			return false;
+		} else {
+			this.setLiftSpeed(0);
+			return true;
 		}
 	}
 
@@ -125,5 +118,10 @@ public class Arm implements Sendable {
 		builder.addBooleanProperty("extend-disabled", this::getExtendDisabled, null);
 		builder.addDoubleProperty("lift-angle", this::getLiftAngle, null);
 		builder.addDoubleProperty("extension", this::getExtensionLength, null);
+	}
+
+	@Override
+	public void periodic() {
+
 	}
 }
