@@ -1,53 +1,71 @@
 
 package frc.robot;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import java.util.timer;
 
 
 public class LEDs {
-
-	/*
-	 * 	public void Autonomous(){
-		boolean on = false;
-		while (isAutonomous()){
-			if (on)
-				toSend[0] = 2;
-			else
-				toSend[0] = 1;
-			on = ! on;
-			i2c.transaction(toSend, 1, null, 0);
-			Timer.delay(.0005);
+	boolean bit1;
+	boolean bit2;
+	boolean bit3;
+		public LEDs (){
+			bit1 = this.bit1;
+			bit2 = this.bit2;
+			bit3 = this.bit3
 		}
-	}
+		// to go with robotinit
+		public void LEDsetup(){
+			DigitalOutput bit1 = new DigitalOutput(4);
+			 DigitalOutput bit2 = new DigitalOutput(6);
+				DigitalOutput bit3 = new DigitalOutput(7);
+				bit1.set(false);
+				bit2.set(false);
+				bit3.set(false);
+				//set all pins to low for startup
+			
+		}
 
-	public void teleOp(boolean cfault, boolean brownout, boolean moving){
-		boolean on = false;
-		while (operatorControl()){
+		public void autofade(){
+			bit1.set(true);
+			bit2.set(false);
+			bit3.set(true);
+		}
 
-			if (XboxController.getYButtonPressed)
-				toSend[0] = 6;
-			else if (XboxController.getXButtonPressed)
-				toSend[0] = 8;
-			else if (XboxController.getAButtonPressed)
-				toSend[0] = 9;
-			else if (XboxController.getBButtonPressed)
-				toSend[0] = 7;
-			else if (XboxController.getXButtonReleased)
-				toSend[0] = 1;
-			else if (XboxController.getYButtonReleased)
-				toSend[0] = 1;
-			else if (XboxController.getAButtonReleased)
-				toSend[0] = 1;
-			else if (XboxController.getBButtonReleased)
-				toSend[0] = 1;
-			else if (cfault);
-				toSend[0] = 10;
-			else if (brownout);
-				toSend[0] = 11;
-			else if (moving);
-				toSend[0] = 12;
-			else ()
-				toSend[0] = 1;
-			on = ! on;
+		public void LEDmain(){
+			 operatorController.getPOV(int pov);
+			 if (pov == 0){
+				bit1.set(true);
+				bit2.set(false);
+				bit3.set(false);
+			 }else if(pov == 90){
+				bit1.set(false);
+				bit2.set(true);
+				bit3.set(false);
+			 }else if(pov == 270){
+				bit1.set(true);
+				bit2.set(true);
+				bit3.set(false);
+			 }else if(pov == 180){
+				bit1.set(false);
+				bit2.set(false);
+				bit3.set(true);
+			 }else if (DriverStation.getinstance().getBatteryVoltage() < 7.2){
+				bit1.set(true);
+				bit2.set(true);
+				bit3.set(true);
+			 }else{
+				bit1.set(false);
+				bit2.set(false);
+				bit3.set(false);
+			 }
+		}
+
+
+
+
+
+
 	}
-	 */
-}
+	
