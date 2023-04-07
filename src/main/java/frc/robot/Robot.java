@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		updateTeleopDrive(true);
+		updateTeleopDrive(false);
 		updateTeleopArm();
 		updateTeleopLeds();
 	}
@@ -116,8 +116,8 @@ public class Robot extends TimedRobot {
 			}
 		} else if ( operatorController.getAButton() ) {
 			// Cone in Middle
-			if ( m_arm.setLiftAngle(41) ) {
-				m_arm.setExtension(-15);
+			if ( m_arm.setLiftAngle(44) ) {
+				m_arm.setExtension(-12);
 			}
 		} else if ( operatorController.getYButton() ) {
 			// Cone on Top
