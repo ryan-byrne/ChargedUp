@@ -33,13 +33,13 @@ public class Drivetrain {
 	// Module D
 	private final SwerveModule m_backRight = new SwerveModule(16, 17);
 	// Robot's orientation in space
-	private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+	public final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
 	//Calculates wheel speeds and directions
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
-	//tracks robot's position and orientation on field 
+	//tracks robot's position and orientation on field
 	private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
 			m_kinematics,
 			m_gyro.getRotation2d(),
@@ -90,6 +90,22 @@ public class Drivetrain {
 
 	public void resetGyro(){
 		m_gyro.reset();
+	}
+
+	public int getRelativeRotation(double rotation) {
+		// if int returned is -1, robot rotation is less than desired rotation
+		// if int returned is 1, robot rotation is more than desired rotation
+		// if int returned is 0, robot rotation is desired rotation
+		double BUFFER = 0.5;
+
+		if ( m_gyro.getRotation2d().getDegrees() > rotation + BUFFER) {
+			return 1;
+		} else if ( m_gyro.getRotation2d().getDegrees() < rotation - BUFFER ) {
+			return -1;
+		} else if ( m_gyro.getRotation2d().getDegrees() > rotation - BUFFER || m_gyro.getRotation2d().getDegrees() < rotation + BUFFER){
+			return 0;
+		}
+		return 0;
 	}
 
 	public void setPosition(int xPosition, int yPosition) {

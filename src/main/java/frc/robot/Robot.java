@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotInit() {
+
 	}
 
 	@Override
@@ -41,7 +42,8 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		scorePreLoaded();
+		sideAuto();
+		//centerAuto();
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-		scorePreLoaded();
+		sideAuto();
 	}
 
 	@Override
@@ -68,7 +70,6 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		updateTeleopDrive(false);
 		updateTeleopArm();
-		updateTeleopLeds();
 	}
 
 	private void updateTeleopDrive(boolean fieldRelative) {
@@ -99,6 +100,9 @@ public class Robot extends TimedRobot {
 
 		m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
 
+		if ( driverController.getYButton() ) {
+			m_swerve.resetGyro();
+		}
 	}
 
 	private void updateTeleopArm() {
@@ -120,7 +124,7 @@ public class Robot extends TimedRobot {
 			}
 		} else if ( operatorController.getYButton() ) {
 			// Cone on Top
-			if ( m_arm.setLiftAngle(44) ) {
+			if ( m_arm.setLiftAngle(45) ) {
 				m_arm.setExtension(-31);
 			}
 		} else if ( operatorController.getBButton() ) {
@@ -146,26 +150,9 @@ public class Robot extends TimedRobot {
 		} else {
 			m_arm.setIntake(0);
 		}
-
-	}
-
-	private void updateTeleopLeds() {
-		// check if arm is moving
-		double liftMotorSpeed = m_arm.getLiftSpeed();
-		double extendMotorSpeed = m_arm.getExtensionSpeed();
-		if ((liftMotorSpeed != 0) || (extendMotorSpeed != 0)) {
-			boolean moving = true;
-		} else {
-			boolean moving = false;
-		}
-
-		// lights control
-		if (operatorController.getLeftBumper()) {
-			// m_leds.blink();
-		}
 	}
 	
-    private void scorePreLoaded() {
+    private void sideAuto() {
 
 		if ( m_autoStep == 0 ) {
 			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
@@ -184,12 +171,60 @@ public class Robot extends TimedRobot {
 		} else if ( m_autoStep == 5 ) {
 			m_swerve.drive(-1, 0, 0, false);
 			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
-			if ( elapsedTime > 3 ) {
+			if ( elapsedTime > 4.5 ) {
 				m_autoStep = 6;
 			}
 		} else if ( m_autoStep == 6) {
 			m_swerve.drive(0, 0, 0, false);
+			m_autoStep = 7;
+		} else if ( m_autoStep == 7 ) {
+			if ( m_swerve.getRelativeRotation(180) == -1 ) {
+				m_swerve.drive(0, 0, 1, false);
+			} else if ( m_swerve.getRelativeRotation(180) == 1 ) {
+				m_swerve.drive(0, 0, -1, false);
+			} else if ( m_swerve.getRelativeRotation(180) == 0 ) {
+				m_swerve.drive(0, 0, 0, false);
+				m_autoStep = 8;
+			}
+		} else if (m_autoStep == 8) {
+			m_autoStep = m_arm.setExtension(0) ? 9 : 8;	
+		} else if (m_autoStep == 9) {
+			m_autoStep = m_arm.setLiftAngle(0) ? 10 : 9;
 		}
     }
 
+	private void centerAuto() {
+		
+		if ( m_autoStep == 0 ) {
+			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
+		} else if (m_autoStep == 1) {
+			m_autoStep = m_arm.setExtension(-31) ? 2 : 1;
+		} else if ( m_autoStep == 2 ) {
+			m_arm.setIntake(0.3);
+			Timer.delay(1);
+			m_arm.setIntake(0);
+			m_autoStep = 3;
+		} else if ( m_autoStep == 3 ) {
+			m_autoStep = m_arm.setExtension(-0.5) ? 4 : 3;
+		} else if (m_autoStep == 4) {
+			m_autoStep = m_arm.setLiftAngle(67) ? 5 : 4;
+			driveTime = Timer.getFPGATimestamp();
+		} else if ( m_autoStep == 5 ) {
+			m_swerve.drive(-1.5, 0, 0, false);
+			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
+			if ( elapsedTime > 3.75 ) {
+				m_autoStep = 6;
+			}
+			driveTime = Timer.getFPGATimestamp();
+		} else if ( m_autoStep == 6) {
+			m_swerve.drive(1, 0, 0, false);
+			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
+			if ( elapsedTime > 3.5 ) {
+				m_autoStep = 7;
+			}
+		} else if ( m_autoStep == 7 ) {
+			m_swerve.drive(0, 0, 0, false);
+			m_autoStep = 8;
+		}
+	}
 }
