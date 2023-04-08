@@ -99,9 +99,9 @@ public class Drivetrain {
 		double BUFFER = 0.5;
 
 		if ( m_gyro.getRotation2d().getDegrees() > rotation + BUFFER) {
-			return 1;
+			return rotation - m_gyro.getRotation2d().getDegrees();
 		} else if ( m_gyro.getRotation2d().getDegrees() < rotation - BUFFER ) {
-			return -1;
+			return rotation - m_gyro.getRotation2d().getDegrees();
 		} else if ( m_gyro.getRotation2d().getDegrees() > rotation - BUFFER || m_gyro.getRotation2d().getDegrees() < rotation + BUFFER){
 			return 0;
 		}

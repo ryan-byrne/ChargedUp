@@ -178,10 +178,10 @@ public class Robot extends TimedRobot {
 			m_swerve.drive(0, 0, 0, false);
 			m_autoStep = 7;
 		} else if ( m_autoStep == 7 ) {
-			if ( m_swerve.getRelativeRotation(180) == -1 ) {
-				m_swerve.drive(0, 0, 1, false);
-			} else if ( m_swerve.getRelativeRotation(180) == 1 ) {
+			if ( m_swerve.getRelativeRotation(180) < 0 ) {
 				m_swerve.drive(0, 0, -1, false);
+			} else if ( m_swerve.getRelativeRotation(180) > 0 ) {
+				m_swerve.drive(0, 0, 1, false);
 			} else if ( m_swerve.getRelativeRotation(180) == 0 ) {
 				m_swerve.drive(0, 0, 0, false);
 				m_autoStep = 8;
