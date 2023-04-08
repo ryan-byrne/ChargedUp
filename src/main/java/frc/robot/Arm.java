@@ -7,12 +7,10 @@ import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Arm extends SubsystemBase implements Sendable {
+public class Arm implements Sendable {
 	// Initializing Variables
 	private final CANSparkMax liftMotor;
 	private final CANSparkMax extendMotor;
@@ -118,10 +116,5 @@ public class Arm extends SubsystemBase implements Sendable {
 		builder.addBooleanProperty("extend-disabled", this::getExtendDisabled, null);
 		builder.addDoubleProperty("lift-angle", this::getLiftAngle, null);
 		builder.addDoubleProperty("extension", this::getExtensionLength, null);
-	}
-
-	@Override
-	public void periodic() {
-
 	}
 }

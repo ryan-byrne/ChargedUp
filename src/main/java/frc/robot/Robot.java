@@ -19,12 +19,12 @@ public class Robot extends TimedRobot {
 	private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
 	private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 	public double slowRate = 1;
-	public double driveTime; 
+	public double driveTime;
 	int m_autoStep;
 
 	@Override
 	public void robotInit() {
-
+		
 	}
 
 	@Override
@@ -42,8 +42,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		sideAuto();
-		//centerAuto();
+		scorePreLoaded();
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-		sideAuto();
+		scorePreLoaded();
 	}
 
 	@Override
@@ -68,13 +67,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		updateTeleopDrive(false);
+		updateTeleopDrive(true);
 		updateTeleopArm();
+		updateTeleopLeds();
 	}
 
 	private void updateTeleopDrive(boolean fieldRelative) {
 
-		if ( driverController.getRightBumper() ){
+		if (driverController.getRightBumper()){
 			slowRate = .1;
 		}
 		else {
@@ -82,13 +82,13 @@ public class Robot extends TimedRobot {
 		}
 		// Get the x speed. We are inverting this because Xbox controllers return
 		// negative values when we push forward.
-		final var xSpeed = m_xspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftY()*slowRate, 0.05))
+		final var xSpeed = -m_xspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftY()*slowRate, 0.05))
 				* Drivetrain.kMaxSpeed;
 
 		// Get the y speed or sideways/strafe speed. We are inverting this because
 		// we want a positive value when we pull to the left. Xbox controllers
 		// return positive values when you pull to the right by default.
-		final var ySpeed = m_yspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftX()*slowRate, 0.05))
+		final var ySpeed = -m_yspeedLimiter.calculate(MathUtil.applyDeadband(driverController.getLeftX()*slowRate, 0.05))
 				* Drivetrain.kMaxSpeed;
 
 		// Get the rate of angular rotation. We are inverting this because we want a
@@ -100,9 +100,6 @@ public class Robot extends TimedRobot {
 
 		m_swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
 
-		if ( driverController.getYButton() ) {
-			m_swerve.resetGyro();
-		}
 	}
 
 	private void updateTeleopArm() {
@@ -124,7 +121,7 @@ public class Robot extends TimedRobot {
 			}
 		} else if ( operatorController.getYButton() ) {
 			// Cone on Top
-			if ( m_arm.setLiftAngle(45) ) {
+			if ( m_arm.setLiftAngle(44) ) {
 				m_arm.setExtension(-31);
 			}
 		} else if ( operatorController.getBButton() ) {
@@ -143,20 +140,37 @@ public class Robot extends TimedRobot {
 			m_arm.setLiftSpeed(-operatorController.getRightY());
 		}
 
-		if ( operatorController.getLeftBumper() ) {
+		if ( operatorController.getLeftBumper()) {
 			m_arm.setIntake(0.3);
 		} else if ( operatorController.getRightBumper() ){
 			m_arm.setIntake(-0.3);
 		} else {
 			m_arm.setIntake(0);
 		}
+
+	}
+
+	private void updateTeleopLeds() {
+		// check if arm is moving
+		double liftMotorSpeed = m_arm.getLiftSpeed();
+		double extendMotorSpeed = m_arm.getExtensionSpeed();
+		if ((liftMotorSpeed != 0) || (extendMotorSpeed != 0)) {
+			boolean moving = true;
+		} else {
+			boolean moving = false;
+		}
+
+		// lights control
+		if (operatorController.getLeftBumper()) {
+			// m_leds.blink();
+		}
 	}
 	
-    private void sideAuto() {
+    private void scorePreLoaded() {
 
 		if ( m_autoStep == 0 ) {
 			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
-		} else if (m_autoStep == 1 ) {
+		} else if (m_autoStep == 1) {
 			m_autoStep = m_arm.setExtension(-31) ? 2 : 1;
 		} else if ( m_autoStep == 2 ) {
 			m_arm.setIntake(0.3);
@@ -165,66 +179,18 @@ public class Robot extends TimedRobot {
 			m_autoStep = 3;
 		} else if ( m_autoStep == 3 ) {
 			m_autoStep = m_arm.setExtension(-0.5) ? 4 : 3;
-		} else if ( m_autoStep == 4 ) {
+		} else if (m_autoStep == 4) {
 			m_autoStep = m_arm.setLiftAngle(67) ? 5 : 4;
 			driveTime = Timer.getFPGATimestamp();
 		} else if ( m_autoStep == 5 ) {
 			m_swerve.drive(-1, 0, 0, false);
 			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
-			if ( elapsedTime > 4.5 ) {
+			if ( elapsedTime > 3 ) {
 				m_autoStep = 6;
 			}
-		} else if ( m_autoStep == 6 ) {
+		} else if ( m_autoStep == 6) {
 			m_swerve.drive(0, 0, 0, false);
-			m_autoStep = 7;
-		} else if ( m_autoStep == 7 ) {
-			if ( m_swerve.getRelativeRotation(180) < 0 ) {
-				m_swerve.drive(0, 0, -1, false);
-			} else if ( m_swerve.getRelativeRotation(180) > 0 ) {
-				m_swerve.drive(0, 0, 1, false);
-			} else if ( m_swerve.getRelativeRotation(180) == 0 ) {
-				m_swerve.drive(0, 0, 0, false);
-				m_autoStep = 8;
-			}
-		} else if ( m_autoStep == 8 ) {
-			m_autoStep = m_arm.setExtension(0) ? 9 : 8;	
-		} else if ( m_autoStep == 9 ) {
-			m_autoStep = m_arm.setLiftAngle(0) ? 10 : 9;
 		}
     }
 
-	private void centerAuto() {
-		
-		if ( m_autoStep == 0 ) {
-			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
-		} else if ( m_autoStep == 1 ) {
-			m_autoStep = m_arm.setExtension(-31) ? 2 : 1;
-		} else if ( m_autoStep == 2 ) {
-			m_arm.setIntake(0.3);
-			Timer.delay(1);
-			m_arm.setIntake(0);
-			m_autoStep = 3;
-		} else if ( m_autoStep == 3 ) {
-			m_autoStep = m_arm.setExtension(-0.5) ? 4 : 3;
-		} else if ( m_autoStep == 4) {
-			m_autoStep = m_arm.setLiftAngle(67) ? 5 : 4;
-			driveTime = Timer.getFPGATimestamp();
-		} else if ( m_autoStep == 5 ) {
-			m_swerve.drive(-1.5, 0, 0, false);
-			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
-			if ( elapsedTime > 3.75 ) {
-				m_autoStep = 6;
-			}
-			driveTime = Timer.getFPGATimestamp();
-		} else if ( m_autoStep == 6 ) {
-			m_swerve.drive(1, 0, 0, false);
-			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
-			if ( elapsedTime > 3.5 ) {
-				m_autoStep = 7;
-			}
-		} else if ( m_autoStep == 7 ) {
-			m_swerve.drive(0, 0, 0, false);
-			m_autoStep = 8;
-		}
-	}
 }
