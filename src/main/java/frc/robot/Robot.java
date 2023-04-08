@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
 	private void updateTeleopDrive(boolean fieldRelative) {
 
-		if (driverController.getRightBumper()){
+		if ( driverController.getRightBumper() ){
 			slowRate = .1;
 		}
 		else {
@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
 			m_arm.setLiftSpeed(-operatorController.getRightY());
 		}
 
-		if ( operatorController.getLeftBumper()) {
+		if ( operatorController.getLeftBumper() ) {
 			m_arm.setIntake(0.3);
 		} else if ( operatorController.getRightBumper() ){
 			m_arm.setIntake(-0.3);
@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
 
 		if ( m_autoStep == 0 ) {
 			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
-		} else if (m_autoStep == 1) {
+		} else if (m_autoStep == 1 ) {
 			m_autoStep = m_arm.setExtension(-31) ? 2 : 1;
 		} else if ( m_autoStep == 2 ) {
 			m_arm.setIntake(0.3);
@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
 			m_autoStep = 3;
 		} else if ( m_autoStep == 3 ) {
 			m_autoStep = m_arm.setExtension(-0.5) ? 4 : 3;
-		} else if (m_autoStep == 4) {
+		} else if ( m_autoStep == 4 ) {
 			m_autoStep = m_arm.setLiftAngle(67) ? 5 : 4;
 			driveTime = Timer.getFPGATimestamp();
 		} else if ( m_autoStep == 5 ) {
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
 			if ( elapsedTime > 4.5 ) {
 				m_autoStep = 6;
 			}
-		} else if ( m_autoStep == 6) {
+		} else if ( m_autoStep == 6 ) {
 			m_swerve.drive(0, 0, 0, false);
 			m_autoStep = 7;
 		} else if ( m_autoStep == 7 ) {
@@ -186,9 +186,9 @@ public class Robot extends TimedRobot {
 				m_swerve.drive(0, 0, 0, false);
 				m_autoStep = 8;
 			}
-		} else if (m_autoStep == 8) {
+		} else if ( m_autoStep == 8 ) {
 			m_autoStep = m_arm.setExtension(0) ? 9 : 8;	
-		} else if (m_autoStep == 9) {
+		} else if ( m_autoStep == 9 ) {
 			m_autoStep = m_arm.setLiftAngle(0) ? 10 : 9;
 		}
     }
@@ -197,7 +197,7 @@ public class Robot extends TimedRobot {
 		
 		if ( m_autoStep == 0 ) {
 			m_autoStep = m_arm.setLiftAngle(45) ? 1 : 0;
-		} else if (m_autoStep == 1) {
+		} else if ( m_autoStep == 1 ) {
 			m_autoStep = m_arm.setExtension(-31) ? 2 : 1;
 		} else if ( m_autoStep == 2 ) {
 			m_arm.setIntake(0.3);
@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
 			m_autoStep = 3;
 		} else if ( m_autoStep == 3 ) {
 			m_autoStep = m_arm.setExtension(-0.5) ? 4 : 3;
-		} else if (m_autoStep == 4) {
+		} else if ( m_autoStep == 4) {
 			m_autoStep = m_arm.setLiftAngle(67) ? 5 : 4;
 			driveTime = Timer.getFPGATimestamp();
 		} else if ( m_autoStep == 5 ) {
@@ -216,7 +216,7 @@ public class Robot extends TimedRobot {
 				m_autoStep = 6;
 			}
 			driveTime = Timer.getFPGATimestamp();
-		} else if ( m_autoStep == 6) {
+		} else if ( m_autoStep == 6 ) {
 			m_swerve.drive(1, 0, 0, false);
 			double elapsedTime = Timer.getFPGATimestamp() - driveTime;
 			if ( elapsedTime > 3.5 ) {

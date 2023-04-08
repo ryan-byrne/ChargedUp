@@ -92,17 +92,17 @@ public class Drivetrain {
 		m_gyro.reset();
 	}
 
-	public int getRelativeRotation(double rotation) {
+	public double getRelativeRotation(double rotation) {
 		// if int returned is -1, robot rotation is less than desired rotation
 		// if int returned is 1, robot rotation is more than desired rotation
 		// if int returned is 0, robot rotation is desired rotation
 		double BUFFER = 0.5;
 
-		if ( m_gyro.getRotation2d().getDegrees() > rotation + BUFFER) {
+		if ( m_gyro.getRotation2d().getDegrees() > rotation + BUFFER ) {
 			return rotation - m_gyro.getRotation2d().getDegrees();
 		} else if ( m_gyro.getRotation2d().getDegrees() < rotation - BUFFER ) {
 			return rotation - m_gyro.getRotation2d().getDegrees();
-		} else if ( m_gyro.getRotation2d().getDegrees() > rotation - BUFFER || m_gyro.getRotation2d().getDegrees() < rotation + BUFFER){
+		} else if ( m_gyro.getRotation2d().getDegrees() > rotation - BUFFER || m_gyro.getRotation2d().getDegrees() < rotation + BUFFER ) {
 			return 0;
 		}
 		return 0;
