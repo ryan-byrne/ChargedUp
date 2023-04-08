@@ -19,7 +19,7 @@ public class Robot extends TimedRobot {
 	private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
 	private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 	public double slowRate = 1;
-	public double driveTime;
+	public double driveTime; 
 	int m_autoStep;
 
 	@Override
